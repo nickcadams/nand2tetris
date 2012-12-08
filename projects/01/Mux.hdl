@@ -12,5 +12,7 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    // Put your code here.
+    Or (a=sel, b=sel, out=x);
+	Or (a=sel, b=sel, out=y);
+	Or (a=x, b=y, 
 }
