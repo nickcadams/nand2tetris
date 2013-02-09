@@ -48,22 +48,22 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-    Mux16(a=x, b[0..15]=false, sel=zx, out=tmpx);
-	Mux16(a=y, b[0..15]=false, sel=zy, out=tmpy);
-	Not16 (in=tmpx, out=notx);
-	Not16 (in=tmpy, out=noty);
-	Mux16 (a=tmpx, b=notx, sel=nx, out=tmpx1);
-	Mux16 (a=tmpy, b=noty, sel=ny, out=tmpy1);
-	Add16 (a=tmpx1, b=tmpy1, out=xaddy);
-	And16 (a=tmpx1, b=tmpy1, out=xandy);
-	Mux16 (a=xandy, b=xaddy, sel=f, out=tmpout);
-	Not16 (in=tmpout, out=notout);
-	Mux16 (a=tmpout, b=notout, sel=no, out=out);
-	Or16Way(in=tmpout, out=zr1);
-	Or16Way(in=notout, out=zr2);
-	Not(in=zr1, out=zr11);
-	Not(in=zr2, out=zr22);
-	Mux(a=zr11, b=zr22, sel=no, out=zr);
+	Not16 (in=x, out=notx);
+	Not16 (in=y, out=noty);
+    Mux4Way16(a=x, b[0..15]=false, c=notx, d[0..15]=true, sel[0]=zx, sel[1]=nx, out=tmpx);
+	Mux4Way16(a=y, b[0..15]=false, c=noty, d[0..15]=true, sel[0]=zy, sel[1]=ny, out=tmpy);
+	Add16(a=tmpx, b=tmpy, out=outadd);
+	And16(a=tmpx, b=tmpy, out=outand);
+	Mux16 (a=outand, b=outadd, sel=f, out=out1);						  
+	Not16(in=out1, out=notout1);
+	Mux16(a=out1, b=notout1, sel=no, out=out,
+									 out[0..7]=lhalf,
+									 out[8..15]=rhalf,
+								     out[15]=ng);
+	Or8Way(in=lhalf, out=zr1);
+	Or8Way(in=rhalf, out=zr2);
+	Or(a=zr1, b=zr2, out=zr3);
+	Not(in=zr3, out=zr);
 	 
 	
 	
